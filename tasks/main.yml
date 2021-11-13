@@ -8,7 +8,18 @@
       - docker.io
       - containerd
       - runc
+    purge: yes
     state: absent
+  become: yes
+
+- name: Remove docker folders
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - /var/lib/docker
+    - /var/lib/containerd
+    - /etc/docker
   become: yes
 
 - name: Install packages required by docker
@@ -21,12 +32,21 @@
     update_cache: yes
   become: yes
 
-- name: Add an Apt signing key
+- name: Add an Apt signing key for docker
   ansible.builtin.apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
     keyring: /usr/share/keyrings/docker-archive-keyring.gpg
     state: present
-  ignore_errors: yes
+  retries: 2
+  delay: 3
+  register: result
+  until: result["failed"] == false
+  become: yes
+
+- name: Add docker to apt repository
+  apt_repository:
+    repo: deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu {{ ansible_facts['lsb']['codename'] }} stable
+    state: present
   become: yes
 
 - name: Remove useless packages from the cache
@@ -57,4 +77,25 @@
       - docker-ce-cli
       - containerd.io
     state: latest
+  become: yes
+
+- name: Create /etc/docker
+  file:
+    path: /etc/docker
+    state: directory
+  become: yes
+
+- name: Copy docker daemon config
+  copy:
+    src: daemon.json
+    dest: /etc/docker/daemon.json
+    mode: "0640"
+  become: yes
+
+- name: Enable docker service, reload and restart
+  systemd:
+    name: docker
+    daemon_reload: yes
+    state: restarted
+    enabled: yes
   become: yes
