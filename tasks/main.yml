@@ -1,0 +1,60 @@
+---
+# tasks file for install-docker-ubuntu
+- name: Remove old docker packages
+  apt:
+    name:
+      - docker
+      - docker-engine
+      - docker.io
+      - containerd
+      - runc
+    state: absent
+  become: yes
+
+- name: Install packages required by docker
+  apt:
+    name:
+      - ca-certificates
+      - curl
+      - lsb-release
+    state: latest
+    update_cache: yes
+  become: yes
+
+- name: Add an Apt signing key
+  ansible.builtin.apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    keyring: /usr/share/keyrings/docker-archive-keyring.gpg
+    state: present
+  ignore_errors: yes
+  become: yes
+
+- name: Remove useless packages from the cache
+  apt:
+    autoclean: yes
+  become: yes
+
+- name: Remove dependencies that are no longer required
+  apt:
+    autoremove: yes
+  become: yes
+
+- name: Run the equivalent of "apt-get update" as a separate step
+  apt:
+    update_cache: yes
+  become: yes
+
+- name: Update all packages to their latest version
+  apt:
+    name: "*"
+    state: latest
+  become: yes
+
+- name: Install docker packages
+  apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+    state: latest
+  become: yes
