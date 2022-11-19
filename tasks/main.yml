@@ -20,6 +20,7 @@
     - /var/lib/docker
     - /var/lib/containerd
     - /etc/docker
+    - /etc/containerd
   become: yes
 
 - name: Install packages required by docker
