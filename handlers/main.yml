@@ -1,2 +1,6 @@
 ---
-# handlers file for install-docker-ubuntu
+- name: Restart containerd service
+  systemd:
+    daemon_reload: true
+    name: containerd
+    state: restarted

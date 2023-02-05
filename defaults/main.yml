@@ -1,2 +1,3 @@
 ---
 # defaults file for install-docker-ubuntu
+containerd_version: 1.4.12-1
