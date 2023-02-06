@@ -98,7 +98,7 @@
   copy:
     content: |
       Package: containerd.io
-      Pin: version {{ cf_containerd_version }}
+      Pin: version {{ containerd_version }}
       Pin-Priority: 1000
     dest: /etc/apt/preferences.d/containerd.pref
     owner: root
