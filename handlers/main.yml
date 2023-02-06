@@ -1,5 +1,6 @@
 ---
 - name: Restart containerd service
+  become: yes
   systemd:
     daemon_reload: true
     name: containerd
