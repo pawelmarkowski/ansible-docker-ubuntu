@@ -108,7 +108,7 @@
 - name: Ensure that containerd.io package is installed
   become: yes
   apt:
-    update_cache: "{{ _repo is changed }}"
+    # update_cache: "{{ _repo is changed }}"
     name:
       - "containerd.io={{ containerd_version }}"
       - apparmor
