@@ -76,6 +76,10 @@
 - name: Remove useless packages from the cache
   apt:
     autoclean: yes
+  retries: 2
+  delay: 3
+  register: result
+  until: result["failed"] == false
   become: yes
 
 - name: Remove dependencies that are no longer required
