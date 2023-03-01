@@ -85,11 +85,19 @@
 - name: Remove dependencies that are no longer required
   apt:
     autoremove: yes
+  retries: 2
+  delay: 3
+  register: result
+  until: result["failed"] == false
   become: yes
 
 - name: Run the equivalent of "apt-get update" as a separate step
   apt:
     update_cache: yes
+  retries: 2
+  delay: 3
+  register: result
+  until: result["failed"] == false
   become: yes
 
 # - name: Ensure that the official docker-ce repository is present
